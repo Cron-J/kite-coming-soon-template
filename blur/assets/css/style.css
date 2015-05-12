@@ -793,6 +793,7 @@ form.news-letter .btn:hover{
 }
 #contact-form .col-sm-6, 
 #contact-form .col-sm-10,
+#contact-form .col-sm-12,
 #contact-form .col-sm-2{
 	padding:0;
 }
@@ -802,10 +803,6 @@ form.news-letter .btn:hover{
 }
 #contact-form  input{
 	height:60px;
-}
-#contact-form #first_name{
-	border-right:0px solid transparent;
-	border-bottom:0px solid transparent;
 }
 #contact-form #last_name{
 	border-bottom:0px solid transparent;
