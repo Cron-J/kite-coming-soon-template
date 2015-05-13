@@ -110,20 +110,53 @@ jQuery(document).ready(function($) {
 
        /* Subscribe
     -------------------------------------------------------------------*/
-    $(".news-letter").ajaxChimp({
-        callback: mailchimpResponse,
-        url: "http://jeweltheme.us10.list-manage.com/subscribe/post?u=a3e1b6603a9caac983abe3892&amp;id=257cf1a459" // Replace your mailchimp post url inside double quote "".  
-    });
+    // $(".news-letter").ajaxChimp({
+    //     callback: mailchimpResponse,
+    //     url: "http://jeweltheme.us10.list-manage.com/subscribe/post?u=a3e1b6603a9caac983abe3892&amp;id=257cf1a459" // Replace your mailchimp post url inside double quote "".  
+    // });
+    $('#subscribe-submit').click(function () {
+        var emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/igm;
+        var emailVal = $('#subscribe-email').val();
+        if (emailVal == "" || emailVal == "Email Address *") {
 
-    function mailchimpResponse(resp) {
-         if(resp.result === 'success') {
-         
-            $('.alert-success').html(resp.msg).fadeIn().delay(3000).fadeOut();
-            
-        } else if(resp.result === 'error') {
-            $('.alert-warning').html(resp.msg).fadeIn().delay(3000).fadeOut();
-        }  
-    };
+            $('.subscribe-error').html('<i class="fa fa-exclamation"></i> Your email address is required.').fadeIn();
+            return false;
+
+        } else if (!emailReg.test(emailVal)) {
+
+            $('.subscribe-error').html('<i class="fa fa-exclamation"></i> Invalid email address.').fadeIn();
+            return false;
+        }
+        var data_string = {
+            name: "",
+            email: emailVal,
+            message: "I wish to subscribe to CrowdPricing.in",
+            subject: "Request for Subscription : CrowdPricing.in"
+        }
+
+        $('#subscribe-submit').hide();
+        $('#subscribe-loading').fadeIn();
+        $('.subscribe-error').fadeOut();
+        $.ajax({
+            type: "POST",
+            url: "/mail.php",
+            data: data_string,
+
+            //success
+            success: function (data) {
+                $('.alert-success').html("Thanks for Subscribing").fadeIn().delay(3000).fadeOut();
+                $('#subscribe-loading').hide();
+                $('#subscribe-submit').fadeIn();
+            },
+            error: function (data) {
+                $('.alert-warning').html("Error: " + resp).fadeIn().delay(3000).fadeOut();
+                $('#subscribe-loading').hide();
+                $('#subscribe-submit').fadeIn();
+            }
+
+        }); //end ajax call
+        return false;
+    });
 
 
 
@@ -131,21 +164,16 @@ jQuery(document).ready(function($) {
 	-------------------------------------------------------------------*/
     $('#contact-submit').click(function () {
         $('.first-name-error, .last-name-error, .contact-email-error, .contact-subject-error, .contact-message-error').hide();
-        var first_nameVal = $('input[name=first_name]').val();
-        var last_nameVal = $('input[name=last_name]').val();
+        var first_nameVal = $('input[name=name]').val();
         var emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/igm;
         var emailVal = $('#contact_email').val();
-        var contact_subjectVal = $('input[name=contact_subject]').val();
+        var contact_subjectVal = $('input[name=subject]').val();
         var messageVal = $('textarea[name=message]').val();
 
         //validate
 
         if (first_nameVal == '' || first_nameVal == 'First Name *') {
             $('.first-name-error').html('<i class="fa fa-exclamation"></i> First name is required.').fadeIn();
-            return false;
-        }
-        if (last_nameVal == '' || last_nameVal == 'Last Name *') {
-            $('.last-name-error').html('<i class="fa fa-exclamation"></i> Last name is required.').fadeIn();
             return false;
         }
         if (emailVal == "" || emailVal == "Email Address *") {
@@ -167,7 +195,7 @@ jQuery(document).ready(function($) {
             return false;
         }
 
-        var data_string = $('.contact-form').serialize();
+        var data_string = $('#contact-form').serialize();
 
         $('#contact-submit').hide();
         $('#contact-loading').fadeIn();
@@ -175,7 +203,7 @@ jQuery(document).ready(function($) {
 
         $.ajax({
             type: "POST",
-            url: "php/contact.php",
+            url: "/mail.php",
             data: data_string,
 
             //success
